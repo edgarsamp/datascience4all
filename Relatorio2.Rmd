@@ -1,0 +1,282 @@
+---
+title: "Análise da Produção Científica e Acadêmica da Universidade Federal do Ceará - Ciência de Dados para Todos (Data Science For All) - Departamento de Ciência da Computação da UnB"
+author: 
+  - "Amanda Bezerra da Silva 15/0057113"
+  - "Edgar Sampaio de Barros 16/0005213"
+  - "George Geonardo de Pontes da Silva 12/0012197"
+  - "Vinícius Costa e Silva 15/0052138"
+date: "24/05/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse); library(jsonlite); library(listviewer)
+
+setwd("/home/vinicius/Dropbox/unb/data_science/relatorio2")
+
+#Ler o arquivo profile
+cic_profile <- jsonlite::fromJSON("cic_profile.json")
+cic_public <- jsonlite::fromJSON("cic_publication.json")
+cic_advise <- jsonlite::fromJSON("cic_advise.json")
+```
+
+# Introdução
+
+Este trabalho foi realizado pelo Grupo 13 da disciplina Ciência de Dados para Todos (Data Science For All), Turma D, do 1º semestre de 2019, do Departamento de Ciência da Computação da Universidade de Brasília (UnB) e visa fornecer análises sobre 3 (três)  programas de pós-graduação da Universidade Federal do Ceará (UFC), sendo eles: Ciências da Computação, Computação e Matemática.
+
+O desenvolvimento deste trabalho segue o modelo metodológico de mineração de dados CRISP-DM. Proposto ainda em 1996, trata-se de um padrão para mineração de dados que é o mais comumente utilizado na indústria. O CRISP-DM quebra o processo de mineração de dados em seis fases distintas, embora não estritamente sequenciais. É comum, durante o desenvolvimento da solução para o problema, que se alterne entre as fases do CRISP-DM conforme seja necessário.
+
+A metodologia CRISP-DM será utilizada em conjunto com tecnologias e técnicas estudadas ao longo do semestre na realização da disciplina. Como resultado do trabalho, espera-se produzir relatórios da avaliação da qualidade dos programas de mestrado e doutorado dos cursos selecionados da UFC, com base em dados recolhidos da plataforma Lattes (um currículo de pesquisadores do Brasil).
+
+# Contextualização
+
+## O que é ciência?
+Uma das definições de ciência concebida por Fernandes, 2017 é a de que ciência é um estudo metódico e organizado sobre qualquer fenômeno que pode acontecer no universo. A produção da ciência é uma atividade fundamentalmente social.
+
+## O que é ciência no Brasil?
+Segundo o rank feito pelo Fórum Econômico Mundial, em 2010 - 2011 o Brasil ficou em 56º no aspecto de desenvolvimento mundial de tecnologia da informação. No Brasil, a ciência é produzida em sua maior parte por universidades públicas e institutos próprios de pesquisa.
+
+# Metodologia
+O modelo CRISP-DM (*Cross Industry Standard Process for Data Mining*) utilizado neste trabalho é um modelo de referência que fornece um processo bem estruturado para realização de projetos de mineração de dados. Trata-se de um modelo amplamente utilizado no mercado e que base de um princípio de entendimento do negócio cujos dados querem ser analisados, e então dos dados e sua posterior preparação, modelagem e análise.
+
+O ciclo de vida do CRISP-DM apresenta 6 (seis) fases, ilustradas na figura 1.
+
+![Fases CRISP-DM](./CRISPDM.png){width=350px} 
+
+## Delimitações iniciais
+Algumas delimitações são apresentadas a seguir usando a estrutura do CRISP-DM.
+
+### Domínio de aplicação do projeto 
+O domínio de aplicação deste projeto é o da produção científica e acadêmica de um subgrupo de pesquisadores vinculados à Universidade Federal do Ceará.
+
+### Tipo de problema abordado
+O problema abordado neste trabalho é o da produção de análises descritivas, quantitativas e de modelagem computacional ou estatística, que permitam caracterizar como e porque ocorre a produção científica e acadêmica de um subgrupo de pesquisadores da Universidade Federal do Ceará. Mais especificamente, consiste no subgrupo formado pelos pesquisadores dos cursos de Ciências da Computação, Computação e Matemática da UFC.
+
+
+## Modelo de Referência CRISP-DM
+Cada  fase do ciclo de vida do CRISP-DM é composto por um conjunto de atividades, as quais podem ser subdivididas em atividades ainda mais específicas. Dessa maneira, busca-se compreender o todo antes de se aprofundar em análises mais específicas do problema, de modo a ter certeza que os modelos e análises posteriormente desenvolvidas irão refletir corretamente o domínio do problema que se deseja tratar.
+
+A seguir é apresentado uma descrição das fases de forma resumida:
+
+* Fase 1 - Entendimento do negócio: definição dos objetivos e necessidades do projeto sob a perspectiva do negócio para que se possa definir o problema ou tema de data mining a ser abordado.
+* Fase 2 - Entendimento dos dados: realização de coleta, organização e descrição dos dados disponíveis, além da análise qualitativa e quantitativa dos mesmos a fim de determinar a viabilidade do projeto.
+* Fase 3 - Preparação dos dados: estruturação e limpeza dos dados disponíveis. Nesta fase os dados são preparados para que se possa iniciar as análises e produções de gráficos.
+* Fase 4 - Modelagem: aplicação de técnicas de data mining e escolha de modelo estatísticos mais apropriado para o projeto.
+* Fase 5 - Avaliação: avaliação dos resultados obtidos e do processo como um todo, analisando se todas as questões relevantes para o projeto foram abordadas de forma adequada e se existem fatores que tenham sido negligenciados.
+* Fase 6 - Implementação: definição de estratégia de implantação dos produtos desenvolvidos pelo projeto para o ambiente operacional, além de monitoramento dos resultados para possíveis adaptações do modelo aplicado.
+
+
+# CRISP-DM Fase 1: Entendimento do Negócio
+
+## O que é o Sistema Nacional de Pós-Graduação?
+O Sistema Nacional de Pós-Graduação (SNPG) é composto por cursos e programas de pós-graduação avaliados e reconhecidos pela Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) e é o principal responsável pela produção de conhecimento científico no Brasil.
+
+Para garantir a qualidade dos programas de pós-graduação que compõem o Sistema Nacional de Pós-Graduação, é realizada a Avaliação do Sistema Nacional de Pós-Graduação, sob orientação da Diretoria de Avaliação/Capes e participação da comunidade acadêmico-científica. 
+
+A avaliação é realizada em 49 áreas de avaliação, número vigente em 2017, e segue sistema e quesitos estabelecidos no Conselho Técnico Científico da Educação Superior (CTC-ES).
+
+
+## Os Colégios, Grandes Áreas e Áreas da Pós-Graduação Brasileira
+Abaixo encontra-se a distribuição das áreas de avaliação, organizadas em 3 Colégios e 9 Grandes Áreas.
+
+### Colégio de Ciências da Vida
+
+CIÊNCIAS AGRÁRIAS | CIÊNCIAS BIOLÓGICAS | CIÊNCIAS DA SAÚDE
+--- | --- | ---
+Ciência de Alimentos | Biodiversidade | Educação Física
+Ciências Agrárias I | Ciências Biológicas I | Enfermagem
+Medicina Veterinária | Ciências Biológicas II | Farmácia
+Zootecnia / Recursos Pesqueiros| Ciências Biológicas III | Medicina I
+- | - | Medicina II
+- | - | Medicina III
+- | - | Nutrição
+- | - | Odontologia
+- | - | Saúde Coletiva
+
+
+### Colégio de Ciências Exatas, Tecnológicas e Multidisciplinar
+
+CIÊNCIAS EXATAS E DA TERRA | ENGENHARIAS | MULTIDISCIPLINAR
+--- | --- | ---
+Astronomia / Física | Engenharias I | Biotecnologia
+Ciência da Computação | Engenharias II | Ciências Ambientais
+Geociências | Engenharias III | Ensino 
+Matemática / Probabilidade e Estatística | Engenharias IV | Interdisciplinar 
+Química | - | Materiais
+
+
+### Colégio de Humanidades
+
+| CIÊNCIAS HUMANAS | CIÊNCIAS SOCIAIS APLICADAS | LINGUÍSTICA, LETRAS E ARTES |
+| :----------------: | :----------------: | :----------------: |
+| Antropologia / Arqueologia | Administração Pública e de Empresas, Ciências Contábeis e Turismo | Artes  |
+| Ciência Política e Relações Internacionais | Arquitetura, Urbanismo e Design | Linguística e Literatura |
+| Ciências da Religião e Teologia | Comunicação e Informação | - |
+| Educação | Direito | - |
+| Filosofia | Economia | - |
+| Geografia | Planejamento Urbano e Regional / Demografia | - |
+| História | Serviço Social | - |
+| Psicologia | - | - | 
+| Sociologia | - | - |
+
+
+# A Universidade Federal do Ceará dentro do Sistema Nacional de Pós-Graduação
+De acordo com os dados disponíveis na Plataforma Sucupira em 2019, na Universidade Federal do Ceará existem 79 programas de pós-graduação em funcionamento, 3 em projeto, 9 desativados e 4 em desativação, totalizando 95 programas. Dos programas existentes, 76 são da modalidade acadêmico e 19 são da modalidade profissional.
+
+## Contextualização dos Programas
+Os programas de Ciências da Computação, Computação e Matemática da Universidade Federal do Ceará são o foco deste trabalho. A seções a seguir apresentam informações a respeito destes programas, retiradas da Plataforma Sucupira em 2019.
+
+### Ciências da Computação
+Os cursos de computação se iniciaram na UFC em 1975, inicialmente com o curso de Tecnologia de Processamento de Dados. Atualmente, reúne ao todo 237 discentes matriculados e 31 docentes. Além disso, conta com 79 disciplinas de Mestrado e Doutorado em vigência. O mestrado em Ciência da Computação da UFC começou no ano de 1995, recebendo aprovação da CAPES em 1997 e recebendo nota 4 em 2004. O doutorado foi consolidado em 2004, também com nota 4, e acabou por iniciar suas atividades em 2005.
+
+Atualmente há 5 grupos de pesquisa atuando dentro do programa de Mestrado e Doutorado de Ciências da Computação da UFC: o ARIDA (Advanced Research in Database), o CRAb (Computer Graphics, Virtual Reality and Animation), o GREaT (grupo de Redes de Computadores, Engenharia de Software e Sistemas), o ParGO (Paralelismo, Grafos e Otimização) e o LOGIA (Lógica e Inteligência Artificial).
+
+Em 2013, o programa de mestrado e doutorado recebeu conceito 5 na avaliação trienal da CAPES (referente ao período dos anos 2010-2011-2012).
+
+Abaixo encontra-se a distribuição das áreas de concentração, linhas de pesquisa e projetos de pesquisa deste programa.
+
+#### Área de Concentração Ciência da Computação
+Organiza-se nas seguintes linhas de pesquisa: 
+
+* Ciência Computacional, que possui 3 projetos de pesquisas em andamento
+* Sistemas de Informação, que possui 27 projetos de pesquisas em andamento
+* Teoria da Computação, que possui 10 projetos de pesquisas em andamento
+
+Totalizando 40 projetos de pesquisas.
+
+Os projetos de pesquisa atualmente em andamento na pós-graduação em Ciências da Computação da UFC são:
+
+Projeto | Linha de pesquisa
+-------------------------------- | --------------------------------
+AGREGAÇÃO DE CRENÇAS E PREFERÊNCIAS EM PROGRAMAÇÃO EM LÓGICA E EM FRAMEWORKS DE ARGUMENTAÇÃO | TEORIA DA COMPUTAÇÃO
+Analyzing big data with time-dependent graphs and machine learning: application to urban traffic analysis and protein function annotation | SISTEMAS DE INFORMAÇÃO
+Atualização da Monitoração Aeronáutica e Auto-Sustentabilidade | SISTEMAS DE INFORMAÇÃO
+Coloração e Infecção em Grafos | TEORIA DA COMPUTAÇÃO
+DIAG_Cloud: Diagnóstico de componentes computacionais e análise de dados em nuvens computacionais | SISTEMAS DE INFORMAÇÃO
+Failure Analysis and Prediction - FAP | SISTEMAS DE INFORMAÇÃO
+Geração de Malhas Através de Particionamento Implícito por Decomposição Espacial Recursiva | CIÊNCIA COMPUTACIONAL 
+GERAÇÃO E ADAPTAÇÃO DE MALHAS PARA SIMULAÇÃO DE RESERVATÓRIOS | CIÊNCIA COMPUTACIONAL
+Gerência de Qualidade de Serviço para Redes de Acesso via Rádio de Quinta Geração com Múltiplas Tecnologias de Acesso e Multiconectividade | SISTEMAS DE INFORMAÇÃO
+GERENCIAMENTO DA SAÚDE DE VEÍCULOS AÉREOS NÃO TRIPULADOS | TEORIA DA COMPUTAÇÃO
+INCT-Ines: Instituto Nacional de Ciência e Tecnologia para Engenharia de Software (INES) | SISTEMAS DE INFORMAÇÃO
+Inteligência Científica e Tecnológica na Segurança Pública | SISTEMAS DE INFORMAÇÃO
+Internet das Coisas e dos Dados | SISTEMAS DE INFORMAÇÃO
+IoT Data and Personal Privacy in Smart Cities | SISTEMAS DE INFORMAÇÃO
+Large?Scale Time Dependent Graphs | SISTEMAS DE INFORMAÇÃO
+MAximUM2IoT - Abordagem para Avaliação da Qualidade de Aplicações Ubíquas no cenário de VANETs e IoT |SISTEMAS DE INFORMAÇÃO
+Medição e Avaliação de Desempenho em Redes de Computadores | SISTEMAS DE INFORMAÇÃO
+METIS: Scientific Investigation on Self-driving Database Systems | SISTEMAS DE INFORMAÇÃO
+Modelagem de comportamento contextual de aplicações para Internet das Coisas utilizando programação baseada em gatilhos | SISTEMAS DE INFORMAÇÃO
+Modelos, Expressividade, Complexidade e Aplicações | TEORIA DA COMPUTAÇÃO
+O patrimônio cultural e artístico de Fortaleza na cultura digital | SISTEMAS DE INFORMAÇÃO
+PIBIC 2018/2019 - AdApT - Abordagem para Avaliação de Aplicações no Ambiente de Internet das Coisas | SISTEMAS DE INFORMAÇÃO
+Plataforma para diagnóstico rápido utilizando biossensores nanotecnológicos de baixo custo baseado em ondas acústicas superficiais e aptâmeros | SISTEMAS DE INFORMAÇÃO
+Privacidade de Dados: Modelos, Mecanismos e Aplicações | SISTEMAS DE INFORMAÇÃO
+Problemas de Coloração e Infecção em Grafos|TEORIA DA COMPUTAÇÃO
+Problemas de Otimização em Grafos acrescidos de restrições de conflito, imposição e dependência | TEORIA DA COMPUTAÇÃO
+Problemas em grafos: complexidade e métodos | TEORIA DA COMPUTAÇÃO
+Projeto MC-MemES: Máquina de Consultas para Banco de Dados em Memórias de Estado Sólido|SISTEMAS DE INFORMAÇÃO
+Projeto PROBRAL - Graph Coloring: Extremal Combinatorics, Graph Theory and Algorithms | TEORIA DA COMPUTAÇÃO
+Replicação Elástica para Banco de Dados em Nuvem | SISTEMAS DE INFORMAÇÃO
+Residência em Segurança da Informação - RSI | SISTEMAS DE INFORMAÇÃO
+Simulação e Animação Baseadas em Física para Computação Gráfica e Realidade Virtual | CIÊNCIA COMPUTACIONAL
+SISTEMA DE RECONHECIMENTO FACIAL DE BAIXO CUSTO | TEORIA DA COMPUTAÇÃO
+Subprojeto do INCT-Ines: Descoberta de Padrões de Mobilidade a partir de Trajetórias de Objetos Móveis e Dados Contextuais | SISTEMAS DE INFORMAÇÃO
+Tecnologias e soluções para habilitar o paradigma de nuvens de coisas | SISTEMAS DE INFORMAÇÃO 
+Tools & CAS: Desenvolvimento e evolução de Aplicativos Móveis e Sistemas Web | SISTEMAS DE INFORMAÇÃO
+UFC Smart Campus: O Uso de Internet das Coisas no Campus do Pici da Universidade Federal do Ceará | SISTEMAS DE INFORMAÇÃO
+Uma Arquitetura descentralizada de suporte à computação em névoa com ênfase no offloading de processamento e dados contextuais | SISTEMAS DE INFORMAÇÃO
+Uso de técnicas de aprendizado de máquina para aumento da eficiência do setor de varejo | TEORIA DA COMPUTAÇÃO
+UTILIZAÇÃO DA TECNOLOGIA DA INFORMAÇÃO NA ADAPTAÇÃO E CAPACITAÇÃO DE ESTUDANTES AFRICANOS ? TI2EA | SISTEMAS DE INFORMAÇÃO
+
+### Computação
+
+Este programa não possui discentes matriculados e reúne 17 docentes. Além disso, conta com 16 disciplinas de Mestrado e Doutorado em vigência.
+
+Abaixo encontra-se a distribuição das áreas de concentração, linhas de pesquisa e projetos de pesquisa deste programa.
+
+#### Área de Concentração Computação
+Organiza-se nas seguintes linhas de pesquisa: 
+
+* Algoritmos e Teoria da Computação
+* Engenharia de Software e Metodologias
+*Sistemas de Computação
+
+Não existem projetos de pesquisas em andamento para nenhuma das linhas de pesquisa desta área.
+
+### Matemática
+A programa de Pós-Graduação em Matemática da UFC foi criado em 1965, tendo seu formato atual delineado em 1995 com a criação do Doutorado em Matemática, tendo este programa ao todo 67 discentes matriculados e 31 docentes. Além disso, conta com 85 disciplinas de Mestrado e Doutorado em vigência.
+
+Abaixo encontra-se a distribuição das áreas de concentração, linhas de pesquisa e projetos de pesquisa deste programa.
+
+#### Área de Concentração Análise
+Possui apenas a linha de pesquisa Análise que conta com 3 projetos de pesquisa em andamento.
+
+#### Área de Concentração Combinatória
+Possui apenas a linha de pesquisa Combinatória que conta com 2 projetos de pesquisa em andamento.
+
+#### Área de Concentração Geometria Diferencial
+Organiza-se nas seguintes linhas de pesquisa:
+
+* Análise Geométrica, que possui 3 projetos de pesquisa em andamento
+* Geometria Diferencial, que possui 4 projetos de pesquisa em andamento
+
+#### Área de Concentração Matemática.
+Não possui linhas de pesquisa e projetos de pesquisa.
+
+#### Área de Concentração Topologia e Singularidades
+Organiza-se nas seguintes linhas de pesquisa:
+
+* Singularidades, que possui 2 projetos de pesquisa em andamento
+* Sistemas Dinâmicos e Teoria Ergódica, que possui 2 projetos de pesquisa em andamento
+* Topologia, que possui 1 projeto de pesquisa em andamento
+
+#### Área de Concentração Álgebra
+Possui apenas a linha de pesquisa Álgebra que conta com 2 projetos de pesquisa em andamento.
+
+Ao todo são 20 programas de pesquisa para Matemática. São esses:
+
+Projeto | Linha de pesquisa
+-------------------------------- | --------------------------------
+Análise de Equações Diferencias Parciais | ANÁLISE
+Análise Qualitativa de Equações Diferenciais Parciais Não-Lineares | ANÁLISE
+Análse Geométrica e Teoria de Singularidade em Espaços Estrafica | ANÁLISE GEOMÉTRICA
+Aspectos Analíticos e Geométricos de EDPs Não Lineares e Aplicações | ANÁLISE
+Coloração Backbone, Coloração Gulosa e Convexidade Cíclica | COMBINATÓRIA
+Decay of correlations and statistical properties of high-dimensional dynamical systems | SISTEMAS DIN MICOS E TEORIA ERGÓDICA
+Discriminante de corpos abelianos e reticulados. | ÁLGEBRA
+Dualidade e localização em geometria diferencial e na teoria de índice | GEOMETRIA DIFERENCIAL
+Fluxos geométricos e área renormalizada em espaços estratificados | ANÁLISE GEOMÉTRICA
+Geometria Diferencial de Subvariedades | GEOMETRIA DIFERENCIAL
+Geometria e análise não linear em espaços singulares e aplicações | PROJETO ISOLADO
+Massa em Relatividade Geral | GEOMETRIA DIFERENCIAL
+Núcleo de Análise Geométrica, Singularidades e Combinatória da PGMAT-UFC. | ANÁLISE GEOMÉTRICA
+Pesquisa em Singularidades e Topologia | SINGULARIDADES
+Singularidades | SINGULARIDADES
+Solitons de Ricci, métrica CPE e Variedades Quase-Einstein | GEOMETRIA DIFERENCIAL
+Symbolic dynamics and non-uniform hyperbolicity | SISTEMAS DIN MICOS E TEORIA ERGÓDICA
+Teoria dos Grafos e Combinatória Extremal. | COMBINATÓRIA
+Tópicos de Álgebras Não-Associativas | ÁLGEBRA
+Topologia e Singularidades | TOPOLOGIA
+
+# Análise dos Dados
+Seguindo-se a metodologia CRISP-DM, após o entendimento do universo que se deseja estudar, o trabalho agora se propõe a fazer as análises de dados
+retirados da plataforma Unb eLattes, com posterior interpretação das análises e discussão dos resultados.
+
+## Coleta Inicial dos Dados
+Os dados a serem analisados foram coletados através da plataforma UnB eLattes, refletindo o período de 2014 a 2018 (correspondente ao período da última avaliação da CAPES). Os dados são referentes aos pesquisadores identificadas durante a fase de entendimento do negócio desse trabalho.
+
+Através da plataforma eLattes, foi feito o download dos arquivos json gerados, contendo os dados brutos que serão analisados. Serão analisados os arquivos *advise.json*, *profile.json* e *publication.json*.
+
+# Referências Bibliográficas
+
+* SOBRE as áreas de avaliação. [S. l.], 20 jan. 2016. Disponível em: https://www.capes.gov.br/avaliacao/sobre-as-areas-de-avaliacao. Acesso em: 10 abr. 2019.
+* SOBRE a avaliação. [S. l.], 20 jan. 2016. Disponível em: https://www.capes.gov.br/avaliacao/sobre-a-avaliacao. Acesso em: 10 abr. 2019.
+* PLATAFORMA Sucupira. [S.l.], 20 jan. 2016. Disponível em: https://sucupira.capes.gov.br/sucupira/. Acesso em: 10 abr. 2019.
+* CRISP-DM – a Standard Methodology to Ensure a Good Outcome. [S. l.], 20 jan. 2016. Disponível em: https://www.datasciencecentral.com/profiles/blogs/crisp-dm-a-standard-methodology-to-ensure-a-good-outcome. Acesso em: 13 abr. 2019.
+* CIÊNCIAS da Computação. [S. l.], 13 mar. 2015. Disponível em: http://www.ufc.br/ensino/guia-de-profissoes/576-ciencia-da-computacao. Acesso em: 13 abr. 2019.
+* MATEMÁTICA. [S. l.], 13 mar. 2015. Disponível em: http://www.mat.ufc.br/portal/ptbr/laboratorios. Acesso em: 13 abr. 2019.
+* Ciência e tecnologia do Brasil. [S. l.]. Disponível em: https://pt.wikipedia.org/wiki/Ci%C3%AAncia_e_tecnologia_do_Brasil.  Acesso em: 13 abr. 2019.
+* Fernandes, Jorge Henrique Cabral. “Considerações Preliminares sobre a Ciência e sua avaliação”. 2017.
