@@ -12,14 +12,7 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse); library(jsonlite); library(listviewer)
-
 setwd("/home/vinicius/Dropbox/unb/data_science/relatorio2")
-
-#Ler o arquivo profile
-cic_profile <- jsonlite::fromJSON("cic_profile.json")
-cic_public <- jsonlite::fromJSON("cic_publication.json")
-cic_advise <- jsonlite::fromJSON("cic_advise.json")
 ```
 
 # Introdução
@@ -268,7 +261,72 @@ retirados da plataforma Unb eLattes, com posterior interpretação das análises
 ## Coleta Inicial dos Dados
 Os dados a serem analisados foram coletados através da plataforma UnB eLattes, refletindo o período de 2014 a 2018 (correspondente ao período da última avaliação da CAPES). Os dados são referentes aos pesquisadores identificadas durante a fase de entendimento do negócio desse trabalho.
 
-Através da plataforma eLattes, foi feito o download dos arquivos json gerados, contendo os dados brutos que serão analisados. Serão analisados os arquivos *advise.json*, *profile.json* e *publication.json*.
+Através da plataforma eLattes, foi feito o download dos arquivos json gerados, contendo os dados brutos que serão analisados. Serão analisados os arquivos *advise.json*, *profile.json* e *publication.json*. Esses arquivos serão estudados para cada um dos três programas de pós-graduação que estão sendo estudados nesse trabalho.
+
+## Entendimento dos Dados
+Uma parte vital no CRISP-DM é o correto entendimento dos dados que estão sendo trabalhados, processo que deve ser realizado antes de uma análise mais aprofundada dos mesmos.
+
+De início, serão utilizadas as seguintes bibliotecas para entendimento e análise dos dados da plataforma eLattes:
+
+```{r, include=TRUE, message = FALSE}
+
+library(jsonlite)
+library(readr)
+library(ggplot2)
+library(stringr)
+library(tidyr)
+library(readxl)
+library(listviewer)
+library(dplyr)
+```
+
+Primeiramente, será carregado o script (fornecido pelos professores) para transformar listas em data frames:
+```{r}
+source("elattes.ls2df.R")
+```
+
+### Dados de perfil
+A análise e entendimento dos dados será inicializado pelo estudo do arquivo JSON correspondente aos perfis individuais de cada pesquisador, em cada um dos três programas de pós-graduação em estudo. Os arquivos serão importados para as seguintes variáveis:
+
+```{r}
+cic_profile <- jsonlite::fromJSON("cic_profile.json")
+comp_profile <- jsonlite::fromJSON("comp_profile.json")
+mat_profile <- jsonlite::fromJSON("mat_profile.json")
+```
+
+A quantidade de docentes que serão analisados em cada um dos três programas de pós-graduação são:
+
+```{r}
+  length(cic_profile)
+```
+
+```{r}
+  length(comp_profile)
+```
+
+```{r}
+  length(mat_profile)
+```
+
+### Dados de orientações
+```{r}
+cic_advise <- jsonlite::fromJSON("cic_advise.json")
+comp_advise <- jsonlite::fromJSON("comp_advise.json")
+mat_advise <- jsonlite::fromJSON("mat_advise.json")
+```
+
+Pode-se entender melhor os dados das orientações dentro desse conjunto de dados utilizando-se a função names, que possibilita investigar quais são as colunas de cada uma das variáveis criadas, como por exemplo:
+
+```{r}
+names(cic_advise)
+```
+
+### Dados das publicações
+```{r}
+cic_publication <- jsonlite::fromJSON("cic_publication.json")
+comp_publication <- jsonlite::fromJSON("comp_publication.json")
+mat_publication <- jsonlite::fromJSON("mat_publication.json")
+```
 
 # Referências Bibliográficas
 
