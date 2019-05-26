@@ -6,33 +6,47 @@ author:
   - "George Geonardo de Pontes da Silva 12/0012197"
   - "Vinícius Costa e Silva 15/0052138"
 date: "24/05/2019"
-output: pdf_document
+output: 
+  pdf_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("/home/vinicius/Dropbox/unb/data_science/relatorio2")
+setwd("/home/amandabezerra/Documentos/UnB/DS4A/datascience4all")
 ```
 
 # Introdução
 
 Este trabalho foi realizado pelo Grupo 13 da disciplina Ciência de Dados para Todos (Data Science For All), Turma D, do 1º semestre de 2019, do Departamento de Ciência da Computação da Universidade de Brasília (UnB) e visa fornecer análises sobre 3 (três)  programas de pós-graduação da Universidade Federal do Ceará (UFC), sendo eles: Ciências da Computação, Computação e Matemática.
 
-O desenvolvimento deste trabalho segue o modelo metodológico de mineração de dados CRISP-DM. Proposto ainda em 1996, trata-se de um padrão para mineração de dados que é o mais comumente utilizado na indústria. O CRISP-DM quebra o processo de mineração de dados em seis fases distintas, embora não estritamente sequenciais. É comum, durante o desenvolvimento da solução para o problema, que se alterne entre as fases do CRISP-DM conforme seja necessário.
+O desenvolvimento deste trabalho segue o modelo metodológico de mineração de dados CRISP-DM em conjunto com tecnologias e técnicas estudadas ao longo do semestre na realização da disciplina. Como resultado do trabalho, espera-se produzir relatórios da avaliação da qualidade dos programas de mestrado e doutorado dos cursos selecionados da UFC, com base em dados recolhidos da plataforma Lattes (um currículo de pesquisadores do Brasil).
 
-A metodologia CRISP-DM será utilizada em conjunto com tecnologias e técnicas estudadas ao longo do semestre na realização da disciplina. Como resultado do trabalho, espera-se produzir relatórios da avaliação da qualidade dos programas de mestrado e doutorado dos cursos selecionados da UFC, com base em dados recolhidos da plataforma Lattes (um currículo de pesquisadores do Brasil).
 
 # Contextualização
 
 ## O que é ciência?
-Uma das definições de ciência concebida por Fernandes, 2017 é a de que ciência é um estudo metódico e organizado sobre qualquer fenômeno que pode acontecer no universo. A produção da ciência é uma atividade fundamentalmente social.
+Uma das definições de ciência concebida por Fernandes, 2017 é a de que ciência é um estudo metódico e organizado sobre qualquer fenômeno que pode acontecer no universo com o objetivo de explicar e prever esses fenômenos. A produção da ciência é uma atividade fundamentalmente social.
+
+A ciência reúne conhecimentos de diversas áreas, onde cada uma possui seu conjunto de princípios e métodos de verificação. Na ciência e em suas áreas é importante que o conhecimento seja certificado, ou seja, que se apresentem provas que comprovem sua veracidade. Assim surge a necessidade de se ter metodologia científica, que é o estudo dos métodos e instrumentos necessários para produção de um trabalho científico.
+
+A ciência é dividida principalmente em ciências exatas e ciências humandas, mas há diversas outras formas de subdividi-la, podendo ser de acordo com os alvos, da finalidade, do  grau de precisão, da área e dos métodos empregados no estudo.
+
+A ciência e suas várias áreas vem evoluindo cada vez mais graças às tecnologias e novas formas de pesquisa e verificação.
 
 ## O que é ciência no Brasil?
-Segundo o rank feito pelo Fórum Econômico Mundial, em 2010 - 2011 o Brasil ficou em 56º no aspecto de desenvolvimento mundial de tecnologia da informação. No Brasil, a ciência é produzida em sua maior parte por universidades públicas e institutos próprios de pesquisa.
+Segundo o rank feito pelo Fórum Econômico Mundial, em 2010 - 2011 o Brasil ficou em 56º no aspecto de desenvolvimento mundial de tecnologia da informação. 
+
+A produção científica brasileira começou de fato nas primeiras décadas do século XIX. Mas as primeiras universidades brasileiras surgiram no início do século XX e mais ou menos nessa mesma época surgiu a Academia Brasileira de Ciências. Em 1951 foi criado o Conselho Nacional de Pesquisa (CNPq) e então surge a Coordenação de Pessoal de Ensino Superior (Capes). De lá pra cá o Brasil começou a ganhar destaque na produção científica mundial.
+
+No Brasil, a ciência é produzida em sua maior parte por universidades públicas e institutos próprios de pesquisa. As universidades e institutos recebem financiamento para que possam realizar suas produções científicas, tais financiamentos podem vim por parte do governo, de companhias públicas, da indústria, de associações e até mesmo de outros países.
 
 # Metodologia
-O modelo CRISP-DM (*Cross Industry Standard Process for Data Mining*) utilizado neste trabalho é um modelo de referência que fornece um processo bem estruturado para realização de projetos de mineração de dados. Trata-se de um modelo amplamente utilizado no mercado e que base de um princípio de entendimento do negócio cujos dados querem ser analisados, e então dos dados e sua posterior preparação, modelagem e análise.
+Proposto ainda em 1996, O modelo CRISP-DM (*Cross Industry Standard Process for Data Mining*) utilizado neste trabalho é um modelo de referência que fornece um processo bem estruturado para realização de projetos de mineração de dados e é um padrão para mineração de dados que é o mais comumente utilizado na indústria. Trata-se de um modelo amplamente utilizado no mercado e que base de um princípio de entendimento do negócio cujos dados querem ser analisados, e então dos dados e sua posterior preparação, modelagem e análise.
+
+O CRISP-DM quebra o processo de mineração de dados em seis fases distintas, embora não estritamente sequenciais. É comum, durante o desenvolvimento da solução para o problema, que se alterne entre as fases do CRISP-DM conforme seja necessário.
+
 
 O ciclo de vida do CRISP-DM apresenta 6 (seis) fases, ilustradas na figura 1.
 
@@ -596,6 +610,14 @@ knitr::include_graphics('./mat_eventos_pais.png')
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics('./mat_periodicos_ano.png')
 ```
+
+## Análises Finais
+Pôde-se observar que a Ciência da Computação produz bem mais material do tipo Evento e nos anos analisados apresentou pouca variação na quantidade de Eventos. 
+
+A Computação também se destaca na produção de bem mais Eventos do que os outros tipos de publicação e isso pode ser explicado pela similaridade entre os programas de Ciência da Computação e de Computação. A quantidade de Eventos apresentou uma queda nos últimos dois anos analisados.
+
+Diferente da Ciência da Computação e da Computação, os tipos de publicações da Matemática são bem mais de Periódicos, ficando o tipo Evento apenas em segundo lugar e sua quantidade sendo cerca de 5 vezes menor. Nos anos analisados obteve pouca variação em relação a quantidade de Periódicos publicados.
+
 
 # Referências Bibliográficas
 
