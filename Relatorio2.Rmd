@@ -254,7 +254,7 @@ Teoria dos Grafos e Combinatória Extremal. | COMBINATÓRIA
 Tópicos de Álgebras Não-Associativas | ÁLGEBRA
 Topologia e Singularidades | TOPOLOGIA
 
-# Análise dos Dados
+# Entendimento dos Dados
 Seguindo-se a metodologia CRISP-DM, após o entendimento do universo que se deseja estudar, o trabalho agora se propõe a fazer as análises de dados
 retirados da plataforma Unb eLattes, com posterior interpretação das análises e discussão dos resultados.
 
@@ -263,7 +263,6 @@ Os dados a serem analisados foram coletados através da plataforma UnB eLattes, 
 
 Através da plataforma eLattes, foi feito o download dos arquivos json gerados, contendo os dados brutos que serão analisados. Serão analisados os arquivos *advise.json*, *profile.json* e *publication.json*. Esses arquivos serão estudados para cada um dos três programas de pós-graduação que estão sendo estudados nesse trabalho.
 
-## Entendimento dos Dados
 Uma parte vital no CRISP-DM é o correto entendimento dos dados que estão sendo trabalhados, processo que deve ser realizado antes de uma análise mais aprofundada dos mesmos.
 
 De início, serão utilizadas as seguintes bibliotecas para entendimento e análise dos dados da plataforma eLattes:
@@ -326,6 +325,195 @@ names(cic_advise)
 cic_publication <- jsonlite::fromJSON("cic_publication.json")
 comp_publication <- jsonlite::fromJSON("comp_publication.json")
 mat_publication <- jsonlite::fromJSON("mat_publication.json")
+```
+
+# Análise dos Dados
+De posse dos dados e com um entendimento melhor da maneira que são estruturados, é possível prosseguir para sua análise. A seguir serão analisados separadamente os três programas de Pós-Graduação sob análise.
+
+## Pós-Graduação em Ciência da Computação
+
+### Quantidade de Publicações por tipo
+```{r}
+for (i in 1:length(cic_publication)){
+  print(names(cic_publication[i]))
+  print(cic_publication[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) %>% sum())
+}
+```
+
+### Quantidade de publicações por tipo e por ano 
+```{r}
+publication_tipo_cic <- cic_publication %>% 
+  sapply(function(x) 
+    sapply(x, function(x)
+      length(x$autores)))
+publication_tipo_cic
+```
+
+### Números de orientações completas por ano
+
+```{r}
+for (i in 6:9){
+  print(names(cic_advise[i]))
+  print(cic_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)))
+}
+```
+
+### Participação em eventos por país
+
+```{r}
+cic_publication$EVENTO %>% 
+  sapply(function(x)
+    (x$pais_do_evento)) %>% 
+  unlist() %>% table() %>% 
+  sort(decreasing = TRUE)
+```
+
+### Disposição de orientações por situação e ano
+
+```{r}
+for (i in 1:length(cic_advise)){
+  print(names(cic_advise[i]))
+  print(cic_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) )
+}
+```
+
+### Sub-áreas de atuação por frequência
+
+```{r}
+cic_profile %>% 
+  sapply(function(x) unique(x$areas_de_atuacao$sub_area)) %>% 
+  unlist() %>% table() %>% sort(decreasing = TRUE) %>% 
+  as.data.frame() %>% filter(!. == "")
+```
+
+## Pós-Graduação em Computação
+
+### Quantidade de Publicações por tipo
+```{r}
+for (i in 1:length(comp_publication)){
+  print(names(comp_publication[i]))
+  print(comp_publication[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) %>% sum())
+}
+```
+
+### Quantidade de publicações por tipo e por ano 
+```{r}
+publication_tipo_comp <- comp_publication %>% 
+  sapply(function(x) 
+    sapply(x, function(x)
+      length(x$autores)))
+publication_tipo_comp
+```
+
+### Números de orientações completas por ano
+
+```{r}
+for (i in 6:9){
+  print(names(comp_advise[i]))
+  print(comp_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)))
+}
+```
+
+### Participação em eventos por país
+
+```{r}
+comp_publication$EVENTO %>% 
+  sapply(function(x)
+    (x$pais_do_evento)) %>% 
+  unlist() %>% table() %>% 
+  sort(decreasing = TRUE)
+```
+
+### Disposição de orientações por situação e ano
+
+```{r}
+for (i in 1:length(comp_advise)){
+  print(names(comp_advise[i]))
+  print(comp_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) )
+}
+```
+
+### Sub-áreas de atuação por frequência
+
+```{r}
+comp_profile %>% 
+  sapply(function(x) unique(x$areas_de_atuacao$sub_area)) %>% 
+  unlist() %>% table() %>% sort(decreasing = TRUE) %>% 
+  as.data.frame() %>% filter(!. == "")
+```
+
+## Pós-Graduação em Matemática
+
+### Quantidade de Publicações por tipo
+```{r}
+for (i in 1:length(mat_publication)){
+  print(names(mat_publication[i]))
+  print(mat_publication[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) %>% sum())
+}
+```
+
+### Quantidade de publicações por tipo e por ano 
+```{r}
+publication_tipo_mat <- mat_publication %>% 
+  sapply(function(x) 
+    sapply(x, function(x)
+      length(x$autores)))
+publication_tipo_mat
+```
+
+### Números de orientações completas por ano
+
+```{r}
+for (i in 6:9){
+  print(names(mat_advise[i]))
+  print(mat_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)))
+}
+```
+
+### Participação em eventos por país
+
+```{r}
+mat_publication$EVENTO %>% 
+  sapply(function(x)
+    (x$pais_do_evento)) %>% 
+  unlist() %>% table() %>% 
+  sort(decreasing = TRUE)
+```
+
+### Disposição de orientações por situação e ano
+
+```{r}
+for (i in 1:length(mat_advise)){
+  print(names(mat_advise[i]))
+  print(mat_advise[[i]] %>% 
+          sapply(function(x)
+            length(x$ano)) )
+}
+```
+
+### Sub-áreas de atuação por frequência
+
+```{r}
+mat_profile %>% 
+  sapply(function(x) unique(x$areas_de_atuacao$sub_area)) %>% 
+  unlist() %>% table() %>% sort(decreasing = TRUE) %>% 
+  as.data.frame() %>% filter(!. == "")
 ```
 
 # Referências Bibliográficas
