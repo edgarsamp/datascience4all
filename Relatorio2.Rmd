@@ -392,6 +392,28 @@ cic_profile %>%
   as.data.frame() %>% filter(!. == "")
 ```
 
+### Natureza das orientações
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./cic_natureza.png')
+```
+
+### Publicações de livros por ano agrupados por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./cic_publications_ano.png')
+```
+
+### Eventos por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./cic_eventos_pais.png')
+```
+
+### Quantidade de periódicos por ano
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./cic_periodicos_ano.png')
+```
 ## Pós-Graduação em Computação
 
 ### Quantidade de Publicações por tipo
@@ -454,6 +476,29 @@ comp_profile %>%
   as.data.frame() %>% filter(!. == "")
 ```
 
+### Natureza das orientações
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./comp_natureza.png')
+```
+
+### Publicações de livros por ano agrupados por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./comp_publications_ano.png')
+```
+
+### Eventos por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./comp_eventos_pais.png')
+```
+
+### Quantidade de periódicos por ano
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./comp_periodicos_ano.png')
+```
+
 ## Pós-Graduação em Matemática
 
 ### Quantidade de Publicações por tipo
@@ -514,6 +559,29 @@ mat_profile %>%
   sapply(function(x) unique(x$areas_de_atuacao$sub_area)) %>% 
   unlist() %>% table() %>% sort(decreasing = TRUE) %>% 
   as.data.frame() %>% filter(!. == "")
+```
+
+### Natureza das orientações
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./mat_natureza.png')
+```
+
+### Publicações de livros por ano agrupados por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./mat_publications_ano.png')
+```
+
+### Eventos por país
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./mat_eventos_pais.png')
+```
+
+### Quantidade de periódicos por ano
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./mat_periodicos_ano.png')
 ```
 
 # Referências Bibliográficas
