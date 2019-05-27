@@ -356,6 +356,8 @@ for (i in 1:length(cic_publication)){
 }
 ```
 
+Percebe-se que o tipo mais recorrente de publicações é do tipo Evento, possui bem mais ocorrências do que o segundo colocado, Periódico.
+
 ### Quantidade de publicações por tipo e por ano 
 ```{r}
 publication_tipo_cic <- cic_publication %>% 
@@ -364,6 +366,7 @@ publication_tipo_cic <- cic_publication %>%
       length(x$autores)))
 publication_tipo_cic
 ```
+Destaca-se que nos anos de 2016 e 2017 houveram mais publicações de Periódicos e Eventos, havendo uma queda dessas publicações no ano de 2018, porém este ano apresentou um aumento de Artigos Aceitos e Capítulos de Livro.
 
 ### Números de orientações completas por ano
 
@@ -376,6 +379,8 @@ for (i in 6:9){
 }
 ```
 
+No geral percebe-se que existem mais orientações concluídas do tipo Mestrado e Outras Orientações, havendo bem poucas orientações de Pós Doutorado. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
+
 ### Participação em eventos por país
 
 ```{r}
@@ -385,6 +390,8 @@ cic_publication$EVENTO %>%
   unlist() %>% table() %>% 
   sort(decreasing = TRUE)
 ```
+
+É interessante observar que este programa possui uma grande participação em eventos em outros países e em vários continentes. 
 
 ### Disposição de orientações por situação e ano
 
@@ -396,6 +403,7 @@ for (i in 1:length(cic_advise)){
             length(x$ano)) )
 }
 ```
+
 
 ### Sub-áreas de atuação por frequência
 
@@ -424,6 +432,8 @@ knitr::include_graphics('./cic_publications_ano.png')
 knitr::include_graphics('./cic_eventos_pais.png')
 ```
 
+Percebe-se que o programa possui muitas participações em Eventos no Estados Unidos, um indicativo de que o país e o Brasil possuem uma boa rede de interação e troca de conhecimento.
+
 ### Quantidade de periódicos por ano
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics('./cic_periodicos_ano.png')
@@ -441,6 +451,8 @@ for (i in 1:length(comp_publication)){
 }
 ```
 
+Percebe-se que o tipo mais recorrente de publicações é do tipo Evento, possui bem mais ocorrências do que o segundo colocado, Periódico.
+
 ### Quantidade de publicações por tipo e por ano 
 ```{r}
 publication_tipo_comp <- comp_publication %>% 
@@ -449,6 +461,8 @@ publication_tipo_comp <- comp_publication %>%
       length(x$autores)))
 publication_tipo_comp
 ```
+
+Destaca-se que nos ano de 2016 houveram mais publicações de Periódicos e Eventos. Outro ponto interessante é a ausência de periódicos do tipo Artigo Aceito e Texto em Jornais em todos os anos.
 
 ### Números de orientações completas por ano
 
@@ -461,6 +475,8 @@ for (i in 6:9){
 }
 ```
 
+Percebe-se que existem bem mais orientações concluídas do tipo Outras Orientações, havendo poucas orientações de Mestrado, Doutorado e nenuma de Pós Doutorado nos anos analisados. 
+
 ### Participação em eventos por país
 
 ```{r}
@@ -470,6 +486,8 @@ comp_publication$EVENTO %>%
   unlist() %>% table() %>% 
   sort(decreasing = TRUE)
 ```
+
+Este programa possui um bom número de participações em eventos em outros países. 
 
 ### Disposição de orientações por situação e ano
 
@@ -525,6 +543,7 @@ for (i in 1:length(mat_publication)){
             length(x$ano)) %>% sum())
 }
 ```
+Percebe-se que o tipo mais recorrente de publicações é do tipo Periódico.
 
 ### Quantidade de publicações por tipo e por ano 
 ```{r}
@@ -534,6 +553,7 @@ publication_tipo_mat <- mat_publication %>%
       length(x$autores)))
 publication_tipo_mat
 ```
+Destaca-se que nos anos de 2016 e 2017 houveram mais publicações de Periódicos e em 2018 houve uma queda, mas no ano de 2018 houveram mais publicações do tipo Artigo Aceito e Demais Tipos de Produção Bibliografica. Pode-se imaginar que o programa focou mais nesses outros tipos de publicação no ano de 2018 em relação a Periódicos.
 
 ### Números de orientações completas por ano
 
@@ -546,6 +566,8 @@ for (i in 6:9){
 }
 ```
 
+No geral percebe-se que existem mais orientações concluídas do tipo Mestrado e Outras Orientações, havendo bem poucas orientações de Pós Doutorado. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
+
 ### Participação em eventos por país
 
 ```{r}
@@ -555,6 +577,8 @@ mat_publication$EVENTO %>%
   unlist() %>% table() %>% 
   sort(decreasing = TRUE)
 ```
+
+É interessante que o país tenha participado de mais eventos na França do que Chile que é um país mais próximo do Brasil. 
 
 ### Disposição de orientações por situação e ano
 
@@ -606,6 +630,9 @@ A Computação também se destaca na produção de bem mais Eventos do que os ou
 
 Diferente da Ciência da Computação e da Computação, os tipos de publicações da Matemática são bem mais de Periódicos, ficando o tipo Evento apenas em segundo lugar e sua quantidade sendo cerca de 5 vezes menor. Nos anos analisados obteve pouca variação em relação a quantidade de Periódicos publicados.
 
+Em relação a participação em Eventos em outros países, percebe-se que os programas de Ciências da Computação e Computação possuem bem mais participações do que o programa de Matemática. Matemática participou em eventos nos anos analisados em apenas 4 países, já Computação participou em 12 países e Ciências da Computação em 29 países. 
+
+No geral, em todos os programas percebe-se que 2016 reuniu maiores números de publicações e orientações. A partir dessa percepção é possível criar teorias a respeito do por quê esse ano apresentou melhores resultados e como trabalhos seguintes buscar investigar essas teorias.
 
 # Referências Bibliográficas
 
