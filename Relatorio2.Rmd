@@ -14,7 +14,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("/home/amandabezerra/Documentos/UnB/DS4A/datascience4all")
+setwd("/home/vinicius/Dropbox/unb/data_science/relatorio2")
 ```
 
 # Introdução
@@ -291,6 +291,7 @@ library(tidyr)
 library(readxl)
 library(listviewer)
 library(dplyr)
+library(scales)
 ```
 
 Primeiramente, será carregado o script (fornecido pelos professores) para transformar listas em data frames:
@@ -414,11 +415,82 @@ A partir desses dados, é fácil perceber que a sub-área de *Metodologia e Téc
 
 ### Natureza das orientações
 
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./cic_natureza.png')
+```{r}
+cic_public.periodico.df <- pub.ls2df(cic_publication, 1) #artigos
+cic_public.livros.df <- pub.ls2df(cic_publication, 2) #livros
+cic_public.textojornais.df <- pub.ls2df(cic_publication, 4) #textos em jornais
+cic_public.eventos.df <- pub.ls2df(cic_publication, 5) #eventos
+```
+
+
+```{r}
+cic_orient.posdoutorado.df <- ori.ls2df(cic_advise, 6) #pos-Doutorado concluído
+cic_orient.doutorado.df <- ori.ls2df(cic_advise, 7) #Doutorado concluído
+cic_orient.mestrado.df <- ori.ls2df(cic_advise, 8) #Mestrado concluído
+
+cic_orient.df <- rbind(rbind(cic_orient.posdoutorado.df, cic_orient.doutorado.df), cic_orient.mestrado.df)
+```
+
+```{r}
+ggplot(cic_orient.df,aes(ano, fill=factor(natureza))) +
+  geom_bar(stat = "count",position='dodge') +
+  ggtitle("Natureza das Orientações") +
+  theme(legend.position="right",legend.text=element_text(size=7)) +
+  guides(fill=guide_legend(nrow=5, byrow=TRUE, title.position = "top")) +
+  labs(x="Ano",y="Quantidade")+labs(fill="Natureza")+theme_bw(base_size = 10)+
+  geom_text(hjust=0.6,
+            vjust=-0.4,
+            size=3,color='black',
+            position = position_dodge(width=0.9),
+            stat = "count", aes(group=factor(natureza),
+                                label=formatC(..count.., big.mark=",")),
+            check_overlap = TRUE)
 ```
 
 O gráfico acima permite perceber que a quantidade de dissertações de mestrado é sempre maior ano a ano. A quantidade de supervisões de pós-doutorado é bem menor e não há resultados registrados para os anos de 2017 e 2018.
+
+### Publicações por ano
+```{r}
+cic_public.periodico.df %>% 
+  ggplot(aes(x = ano)) + geom_bar(aes(fill=ano)) + 
+  geom_text(stat = "count", aes(label=formatC(..count.., big.mark=",")),vjust=-0.1) + 
+  theme_bw()+labs(x="Ano",y="Quantidade de Periódicos") +
+  scale_y_continuous(labels = comma)
+```
+
+### Publicações de livros fora do Brasil
+```{r}
+cic_public.livros.df %>%
+  group_by(pais_de_publicacao) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_de_publicacao != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_de_publicacao, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral")+ 
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,
+            vjust=0.3,
+            size=3.5) + coord_flip() +
+  labs(title = "Publicação de Livros em Países Estrangeiros", x = "Países", y = "Quantidade de Livros")+
+  theme_bw()
+
+```
+
+### Eventos por País
+
+```{r}
+cic_public.eventos.df %>%
+  group_by(pais_do_evento) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_do_evento != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_do_evento, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral3")+ 
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,
+            vjust=0.3,
+            size=2.5)+ coord_flip() +
+  labs(title = "Eventos", x = "Países", y = "Quantidade de Eventos") + theme_bw()
+```
+Algumas análises básicas também permitem perceber que os Estados Unidos são o país em que os docentes da Pós-Graduação em Ciência da Computação mais participam de eventos, seguido (em quantidade bem menore), pela Itália e Espanha. Nesse gráfico foram mostrados apenas os eventos acontecidos fora do país.
 
 ### Publicações de livros por ano agrupados por país
 
@@ -427,19 +499,6 @@ knitr::include_graphics('./cic_publications_ano.png')
 ```
 
 O maior número de publicações de livros acontece, obviamente, no Brasil. Mas percebe-se, nos anos de 2015 e 2018, que os docentes da Pós-Graduação em Ciência da Computação publicaram livros na Holanda e, especificamente em 2018, também na Inglaterra.
-
-### Eventos por país
-
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./cic_eventos_pais.png')
-```
-
-Algumas análises básicas também permitem perceber que os Estados Unidos são o país em que os docentes da Pós-Graduação em Ciência da Computação mais participam de eventos, seguido (em quantidade bem menore), pela Itália e Espanha. Nesse gráfico foram mostrados apenas os eventos acontecidos fora do país.
-
-### Quantidade de periódicos por ano
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./cic_periodicos_ano.png')
-```
 
 ## Pós-Graduação em Computação
 
@@ -462,6 +521,8 @@ publication_tipo_comp <- comp_publication %>%
 publication_tipo_comp
 ```
 
+Através da análise acima, pode-se ver que a publicação de periódicos ano a ano varia bastante, assim como publicações em livros e outros tipos de publicações bibliográficas.
+
 ### Números de orientações completas por ano
 
 ```{r}
@@ -472,6 +533,8 @@ for (i in 6:9){
             length(x$ano)))
 }
 ```
+
+Percebe-se que, em média, cresce o número de orientações completas por ano para o período estudado.
 
 ### Participação em eventos por país
 
@@ -503,28 +566,89 @@ comp_profile %>%
   as.data.frame() %>% filter(!. == "")
 ```
 
+Através da análise acima, pode-se ver que a área com maior número de docentes atuantes é em *Sistemas de Computação*, seguida de perto por *Metodologia e Técnicas de Computação* e *Teoria da Computação*.
+
 ### Natureza das orientações
 
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./comp_natureza.png')
+```{r}
+comp_public.periodico.df <- pub.ls2df(comp_publication, 1) #artigos
+comp_public.livros.df <- pub.ls2df(comp_publication, 2) #livros
+comp_public.textojornais.df <- pub.ls2df(comp_publication, 4) #textos em jornais
+comp_public.eventos.df <- pub.ls2df(comp_publication, 5) #eventos
 ```
 
-### Publicações de livros por ano agrupados por país
+
+```{r}
+comp_orient.posdoutorado.df <- ori.ls2df(comp_advise, 6) #pos-Doutorado concluído
+comp_orient.doutorado.df <- ori.ls2df(comp_advise, 7) #Doutorado concluído
+comp_orient.mestrado.df <- ori.ls2df(comp_advise, 8) #Mestrado concluído
+
+comp_orient.df <- rbind(rbind(comp_orient.posdoutorado.df, comp_orient.doutorado.df), comp_orient.mestrado.df)
+```
+
+```{r}
+ggplot(comp_orient.df,aes(ano, fill=factor(natureza))) +
+  geom_bar(stat = "count",position='dodge') +
+  ggtitle("Natureza das Orientações") +
+  theme(legend.position="right",legend.text=element_text(size=7)) +
+  guides(fill=guide_legend(nrow=5, byrow=TRUE, title.position = "top")) +
+  labs(x="Ano",y="Quantidade")+labs(fill="Natureza")+theme_bw(base_size = 10)+
+  geom_text(hjust=0.6,
+            vjust=-0.4,
+            size=3,
+            color='black',
+            position = position_dodge(width=0.9),
+            stat = "count", 
+            aes(group=factor(natureza),
+                label=formatC(..count.., big.mark=",")),
+            check_overlap = TRUE)
+```
+
+### Publicações por ano
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./comp_publications_ano.png')
+comp_public.periodico.df %>% 
+  ggplot(aes(x = ano)) + geom_bar(aes(fill=ano)) + 
+  geom_text(stat = "count", aes(label=formatC(..count.., 
+                                              big.mark=",")),
+            vjust=-0.1) + 
+  theme_bw()+labs(x="Ano",y="Quantidade de Periódicos") +
+  scale_y_continuous(labels = comma)
+```
+
+### Publicações de livros fora do Brasil
+```{r}
+comp_public.livros.df %>%
+  group_by(pais_de_publicacao) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_de_publicacao != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_de_publicacao, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral")+
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,
+            vjust=0.3,
+            size=3.5) + coord_flip() +
+  labs(title = "Publicação de Livros em Países Estrangeiros", x = "Países", y = "Quantidade de Livros")+
+  theme_bw()
+
 ```
 
 ### Eventos por país
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./comp_eventos_pais.png')
+comp_public.eventos.df %>%
+  group_by(pais_do_evento) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_do_evento != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_do_evento, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral3")+ 
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,
+            vjust=0.3,
+            size=2.5)+ coord_flip() +
+  labs(title = "Eventos", x = "Países", y = "Quantidade de Eventos") + theme_bw()
 ```
 
-### Quantidade de periódicos por ano
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./comp_periodicos_ano.png')
-```
 
 ## Pós-Graduação em Matemática
 
@@ -590,25 +714,78 @@ mat_profile %>%
 
 ### Natureza das orientações
 
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./mat_natureza.png')
+```{r}
+mat_public.periodico.df <- pub.ls2df(mat_publication, 1) #artigos
+mat_public.livros.df <- pub.ls2df(mat_publication, 2) #livros
+mat_public.textojornais.df <- pub.ls2df(mat_publication, 4) #textos em jornais
+mat_public.eventos.df <- pub.ls2df(mat_publication, 5) #eventos
 ```
 
-### Publicações de livros por ano agrupados por país
+
+```{r}
+mat_orient.posdoutorado.df <- ori.ls2df(mat_advise, 6) #pos-Doutorado concluído
+mat_orient.doutorado.df <- ori.ls2df(mat_advise, 7) #Doutorado concluído
+mat_orient.mestrado.df <- ori.ls2df(mat_advise, 8) #Mestrado concluído
+
+mat_orient.df <- rbind(rbind(mat_orient.posdoutorado.df, mat_orient.doutorado.df), mat_orient.mestrado.df)
+```
+
+```{r}
+ggplot(mat_orient.df,aes(ano, fill=factor(natureza))) +
+  geom_bar(stat = "count",position='dodge') +
+  ggtitle("Natureza das Orientações") +
+  theme(legend.position="right",legend.text=element_text(size=7)) +
+  guides(fill=guide_legend(nrow=5, byrow=TRUE, title.position = "top")) +
+  labs(x="Ano",y="Quantidade")+labs(fill="Natureza")+theme_bw(base_size = 10)+
+  geom_text(hjust=0.6,
+            vjust=-0.4,
+            size=3,color='black',
+            position = position_dodge(width=0.9),
+            stat = "count", 
+            aes(group=factor(natureza),
+                label=formatC(..count.., big.mark=",")),
+            check_overlap = TRUE)
+```
+
+### Publicações por ano
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./mat_publications_ano.png')
+mat_public.periodico.df %>% 
+  ggplot(aes(x = ano)) + geom_bar(aes(fill=ano)) + 
+  geom_text(stat = "count", aes(label=formatC(..count.., big.mark=",")),vjust=-0.1) + 
+  theme_bw()+labs(x="Ano",y="Quantidade de Periódicos") +
+  scale_y_continuous(labels = comma)
+```
+
+### Publicações de livros fora do Brasil
+```{r}
+mat_public.livros.df %>%
+  group_by(pais_de_publicacao) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_de_publicacao != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_de_publicacao, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral")+ 
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,vjust=0.3,size=3.5) + coord_flip() +
+  labs(title = "Publicação de Livros em Países Estrangeiros", 
+       x = "Países", 
+       y = "Quantidade de Livros")+
+  theme_bw()
+
 ```
 
 ### Eventos por país
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./mat_eventos_pais.png')
-```
-
-### Quantidade de periódicos por ano
-```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./mat_periodicos_ano.png')
+mat_public.eventos.df %>%
+  group_by(pais_do_evento) %>%
+  summarise(Quantidade = n()) %>%
+  filter(pais_do_evento != "Brasil") %>% 
+  ggplot(aes(x = reorder(pais_do_evento, (Quantidade)), y = Quantidade)) +
+  geom_col(fill = "coral3")+ 
+  geom_text(aes(label=comma(Quantidade)),
+            hjust=-0.2,vjust=0.3,size=2.5)+ coord_flip() +
+  labs(title = "Eventos", x = "Países", y = "Quantidade de Eventos") + theme_bw()
 ```
 
 ## Análises Finais
