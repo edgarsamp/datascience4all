@@ -366,6 +366,7 @@ publication_tipo_cic <- cic_publication %>%
       length(x$autores)))
 publication_tipo_cic
 ```
+
 Destaca-se que nos anos de 2016 e 2017 houveram mais publicações de Periódicos e Eventos, havendo uma queda dessas publicações no ano de 2018, porém este ano apresentou um aumento de Artigos Aceitos e Capítulos de Livro.
 
 ### Números de orientações completas por ano
@@ -379,7 +380,7 @@ for (i in 6:9){
 }
 ```
 
-No geral percebe-se que existem mais orientações concluídas do tipo Mestrado e Outras Orientações, havendo bem poucas orientações de Pós Doutorado. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
+A partir de algumas análises preliminares na base de dados, é possível perceber que o número de orientações completas por ano é sempre maior para outros tipos de orientações concluídas (que não mestrado, doutorado e pós-doutorado), e que dessas três, o número de orientações concluídas de mestrado é sempre maior.
 
 ### Participação em eventos por país
 
@@ -390,6 +391,8 @@ cic_publication$EVENTO %>%
   unlist() %>% table() %>% 
   sort(decreasing = TRUE)
 ```
+
+Dentro da Pós-Graduação de Ciência da Computação, a presença em eventos é maior no Brasil, embora exista um grande número de participações em eventos também nos Estados Unidos (com 43 participações), e também na Itália, Espanha e Portugal (embora em menor quantidade).
 
 É interessante observar que este programa possui uma grande participação em eventos em outros países e em vários continentes. 
 
@@ -414,11 +417,15 @@ cic_profile %>%
   as.data.frame() %>% filter(!. == "")
 ```
 
+A partir desses dados, é fácil perceber que a sub-área de *Metodologia e Técnicas de Computação* é que possui a maior frequência de atuação, seguida por *Teoria da Computação* e *Sistemas de Computação*.
+
 ### Natureza das orientações
 
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics('./cic_natureza.png')
 ```
+
+O gráfico acima permite perceber que a quantidade de dissertações de mestrado é sempre maior ano a ano. A quantidade de supervisões de pós-doutorado é bem menor e não há resultados registrados para os anos de 2017 e 2018.
 
 ### Publicações de livros por ano agrupados por país
 
@@ -426,13 +433,15 @@ knitr::include_graphics('./cic_natureza.png')
 knitr::include_graphics('./cic_publications_ano.png')
 ```
 
+O maior número de publicações de livros acontece, obviamente, no Brasil. Mas percebe-se, nos anos de 2015 e 2018, que os docentes da Pós-Graduação em Ciência da Computação publicaram livros na Holanda e, especificamente em 2018, também na Inglaterra.
+
 ### Eventos por país
 
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics('./cic_eventos_pais.png')
 ```
 
-Percebe-se que o programa possui muitas participações em Eventos no Estados Unidos, um indicativo de que o país e o Brasil possuem uma boa rede de interação e troca de conhecimento.
+Algumas análises básicas também permitem perceber que os Estados Unidos são o país em que os docentes da Pós-Graduação em Ciência da Computação mais participam de eventos, seguido (em quantidade bem menore), pela Itália e Espanha. Nesse gráfico foram mostrados apenas os eventos acontecidos fora do país.
 
 ### Quantidade de periódicos por ano
 ```{r echo=FALSE, out.width='100%'}
@@ -631,6 +640,10 @@ A Computação também se destaca na produção de bem mais Eventos do que os ou
 Diferente da Ciência da Computação e da Computação, os tipos de publicações da Matemática são bem mais de Periódicos, ficando o tipo Evento apenas em segundo lugar e sua quantidade sendo cerca de 5 vezes menor. Nos anos analisados obteve pouca variação em relação a quantidade de Periódicos publicados.
 
 Em relação a participação em Eventos em outros países, percebe-se que os programas de Ciências da Computação e Computação possuem bem mais participações do que o programa de Matemática. Matemática participou em eventos nos anos analisados em apenas 4 países, já Computação participou em 12 países e Ciências da Computação em 29 países. 
+
+Nos programas de Computação e Ciências da Computação ocorreram muitas participações em Eventos no Estados Unidos, um indicativo de que o país e o Brasil possuem uma boa rede de interação e troca de conhecimento.
+
+No geral percebe-se que existem poucas orientações de Pós Doutorado em relação aos demais tipos. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
 
 No geral, em todos os programas percebe-se que 2016 reuniu maiores números de publicações e orientações. A partir dessa percepção é possível criar teorias a respeito do por quê esse ano apresentou melhores resultados e como trabalhos seguintes buscar investigar essas teorias.
 
