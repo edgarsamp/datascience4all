@@ -1212,7 +1212,8 @@ No caso do programa de pós-graduação em Matemática, percebe-se também uma g
 
 No geral percebe-se que existem poucas orientações de Pós Doutorado em relação aos demais tipos. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
 
-Outra questão interessante é o grande número de orientações concluídas do tipo *Outras Orientações* que ocorre em todos os programas analisados.
+Ao analisar a categoria outras orientações percebe-se que sempre possui uma quantidade elevada de publicações, isso se dá ao fato dela ser composta por trabalhos de conclusão de curso e iniciação científica de estudantes de graduação. Nela também está incluso orientações de outras naturezas que não são especificadas currículo dos orientadores observados/analisados
+
 
 ## Perfil
 
