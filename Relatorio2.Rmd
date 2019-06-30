@@ -14,7 +14,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("/home/amandabezerra/Documentos/UnB/DS4A/datascience4all")
+setwd("/home/vinicius/projetos/unb/datascience4all")
 ```
 
 # Introdução
@@ -292,6 +292,8 @@ library(readxl)
 library(listviewer)
 library(dplyr)
 library(scales)
+library(tm)
+library(wordcloud)
 ```
 
 Primeiramente, será carregado o script (fornecido pelos professores) para transformar listas em data frames:
@@ -807,6 +809,220 @@ mat_public.eventos.df %>%
             hjust=-0.2,vjust=0.3,size=2.5)+ coord_flip() +
   labs(title = "Eventos", x = "Países", y = "Quantidade de Eventos") + theme_bw()
 ```
+
+# Modelos de Análise
+
+## Análise de Redes
+Uma rede (ou um grafo de redes) representa uma conexão entre indivíduos. Na representação por redes, a presença de uma aresta entre um ou mais nós representa a existência de uma relação entre os indivíduos conectados, formando assim a rede. Há vários tipos de padrões e relacionamentos que podem ser modelos e representados como uma rede dessa maneira.
+
+A partir dos arquivos graph.json podemos criar modelos de relacionamento entre os pesquisadores de diversos departamentos. Para tal será utilizada a biblioteca **igraph**, que permite a visualização gráfica desses relacionamentos na forma de uma estrutura de dados conhecida como *grafo*.
+
+Começamos nossa análise carregando a biblioteca **igraph**:
+
+```{r echo=FALSE}
+library(igraph)
+```
+
+A análise de redes detalhada será feita para cada um dos programas de pós-graduação a seguir:
+
+### Ciência da Computação
+Começamos carregando o arquivo json para a memória e criando variáveis para representar os nós e os relacionamentos entre os diversos autores do programa de Pós-Graduação em Ciência da Computação.
+```{r}
+  cic_graph <- jsonlite::fromJSON("cic_graph.json")
+  cic_nodes <- cic_graph$nodes
+  cic_nodes$properties <- NULL
+  cic_relations <- cic_graph$links
+```
+
+Podemos observar as primeiras linhas dos nós (ou seja, os pesquisadores em si):
+
+```{r}
+head(cic_nodes)
+```
+
+O mesmo pode ser feita para ser observar os relacionamentos (as arestas no grafo):
+
+```{r}
+head(cic_relations)
+```
+
+A biblioteca **igraph** facilita bastante o processo de geração das redes a partir dos dados fornecidos.
+
+```{r}
+  graph_cic <- graph_from_data_frame(cic_relations, directed=TRUE, vertices=cic_nodes)
+  plot(graph_cic)
+```
+
+Pode-se observar facilmente que há dois *clusters* distintos de pesquisadores que já trabalharam em conjunto, além de três outros pesquisadores que trabalham apenas sozinhos.
+
+### Computação
+Fazendo-se a análise anterior para a Pós-Graduação em Computação, obtemos os seguintes resultados:
+
+```{r}
+  comp_graph <- jsonlite::fromJSON("comp_graph.json")
+  comp_nodes <- comp_graph$nodes
+  comp_nodes$properties <- NULL
+  comp_relations <- comp_graph$links
+```
+
+Observando-se os primeiros dados dos conjuntos de nós e das arestas:
+
+```{r}
+  head(comp_nodes)
+```
+
+
+```{r}
+  head(comp_relations)
+```
+
+```{r}
+  graph_comp <- graph_from_data_frame(comp_relations, directed=TRUE, vertices=comp_nodes)
+  plot(graph_comp)
+```
+
+Na análise para a Pós-Graduação em Computação fica bem claro que há um número menor de pesquisadores, e diferentemente da Pós-Graduação em Ciência da Computação, aqui fica bem claro que não há uma separação tão grandes entre diferentes *clusters* de pesquisa.
+
+### Matemática
+Por último, a análise de redes será feita para a Pós-Graduação em Matemática.
+
+```{r}
+  mat_graph <- jsonlite::fromJSON("mat_graph.json")
+  mat_nodes <- mat_graph$nodes
+  mat_nodes$properties <- NULL
+  mat_relations <- mat_graph$links
+```
+
+Observando-se os dados:
+
+```{r}
+  head(mat_nodes)
+```
+
+```{r}
+  head(mat_relations)
+```
+
+```{r}
+  graph_mat <- graph_from_data_frame(mat_relations, directed=TRUE, vertices=mat_nodes)
+  plot(graph_mat)
+```
+
+A análise das redes no programa de pós-graduação em Matemática é interessante por ser bastante diferente dos outros dois programas sendo estudados. Em primeiro lugar, percebe-se facilmente que há muito menos colaboração entre os diversos pesquisadores desse departamento do que nos outros dois em estudo, observando-se apenas quatro agrupamentos de pesquisadores que já trabalharam em conjunto na parte inferior do grafo.
+
+## Nuvem de Palavras
+Ainda dentro do escopo dos modelos de análise, o modelo de *Word Cloud*, ou Nuvem de Palavras, é interessante como maneira de representar visualmente a ocorrência de diferentes palavras dentro do conjunto de dados que se quer analisar.
+
+### Ciência da Computação
+Fazendo-se a limpeza dos dados dos títulos das publicações para criação da nuvem de palavras:
+```{r}
+  cic_publication.df <- data.frame()
+  for (i in 1:length(cic_publication[[1]]))
+    cic_publication.df <- rbind(cic_publication.df, cic_publication$PERIODICO[[i]])
+  cic_publication.df$autores <- gsub("\",\"|\", \"", "; ", cic_publication.df$autores)
+  cic_publication.df$autores <- gsub("\"|c\\(|\\)", "", cic_publication.df$autores)
+  cic_publication.df$`autores-endogeno` <- gsub(",", ";", cic_publication.df$`autores-endogeno`)
+  cic_publication.df$`autores-endogeno` <- gsub("\"|c\\(|\\)", "", cic_publication.df$`autores-endogeno`)
+```
+
+Com os dados dos títulos das publicações limpos, é possível prosseguir para a realização da análise usando os pacotes **tm** e **wordcloud**.
+
+```{r}
+cic_publication.df$titulo <- iconv(cic_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
+df_wc <- data.frame(doc_id = cic_publication.df$issn, text = cic_publication.df$titulo, stringsAsFactors = FALSE )
+docs <- Corpus(DataframeSource(df_wc))
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, removeWords, stopwords("pt"))
+docs <- tm_map(docs, removeWords, stopwords("english"))
+docs <- tm_map(docs, removeWords, c("universidade", "federal","computação","posgraduacao","ciência","matemática"))
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, stripWhitespace)
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+set.seed(1234)
+wordcloud(words =(d$word), freq = d$freq, min.freq = 3,
+  max.words=30,scale = c(4, 0.3), random.order=FALSE, rot.per=0.4,
+  colors=brewer.pal(8, "Dark2"))
+```
+A nuvem de palavras acima permite observar que um grande número de publicações na área de ciência da computação está voltada para a área de grafos e redes.
+
+### Computação
+A mesma análise de nuvem de palavras pode ser feita também para o programa de pós-graduação em Computação. Iniciando pela limpeza dos dados:
+
+```{r}
+  comp_publication.df <- data.frame()
+  for (i in 1:length(comp_publication[[1]]))
+    comp_publication.df <- rbind(comp_publication.df, comp_publication$PERIODICO[[i]])
+  comp_publication.df$autores <- gsub("\",\"|\", \"", "; ", comp_publication.df$autores)
+  comp_publication.df$autores <- gsub("\"|c\\(|\\)", "", comp_publication.df$autores)
+  comp_publication.df$`autores-endogeno` <- gsub(",", ";", comp_publication.df$`autores-endogeno`)
+  comp_publication.df$`autores-endogeno` <- gsub("\"|c\\(|\\)", "", comp_publication.df$`autores-endogeno`)
+```
+
+E fazendo-se a nuvem de palavras:
+
+```{r}
+comp_publication.df$titulo <- iconv(comp_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
+df_wc <- data.frame(doc_id = comp_publication.df$issn, text = comp_publication.df$titulo, stringsAsFactors = FALSE )
+docs <- Corpus(DataframeSource(df_wc))
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, removeWords, stopwords("pt"))
+docs <- tm_map(docs, removeWords, stopwords("english"))
+docs <- tm_map(docs, removeWords, c("universidade", "federal","computação","posgraduacao","ciência","matemática"))
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, stripWhitespace)
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+set.seed(1234)
+wordcloud(words =(d$word), freq = d$freq, min.freq = 3,
+  max.words=30,scale = c(4, 0.3), random.order=FALSE, rot.per=0.4,
+  colors=brewer.pal(8, "Dark2"))
+```
+
+No caso do programa de pós-graduação em Computação, percebe-se uma frequência maior de aparecimento de palavras relacionados a ensino e estudo, explicitando o foco educacional dessa área da computação.
+
+### Matemática
+Por último, pode-se realizar a mesma análise para a pós-graduação em matemática:
+
+```{r}
+  mat_publication.df <- data.frame()
+  for (i in 1:length(mat_publication[[1]]))
+    mat_publication.df <- rbind(mat_publication.df, mat_publication$PERIODICO[[i]])
+  mat_publication.df$autores <- gsub("\",\"|\", \"", "; ", mat_publication.df$autores)
+  mat_publication.df$autores <- gsub("\"|c\\(|\\)", "", mat_publication.df$autores)
+  mat_publication.df$`autores-endogeno` <- gsub(",", ";", mat_publication.df$`autores-endogeno`)
+  mat_publication.df$`autores-endogeno` <- gsub("\"|c\\(|\\)", "", mat_publication.df$`autores-endogeno`)
+```
+
+E a nuvem de palavras:
+
+```{r}
+mat_publication.df$titulo <- iconv(mat_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
+df_wc <- data.frame(doc_id = mat_publication.df$issn, text = mat_publication.df$titulo, stringsAsFactors = FALSE )
+docs <- Corpus(DataframeSource(df_wc))
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, removeWords, stopwords("pt"))
+docs <- tm_map(docs, removeWords, stopwords("english"))
+docs <- tm_map(docs, removeWords, c("universidade", "federal","computação","posgraduacao","ciência","matemática"))
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, stripWhitespace)
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+set.seed(1234)
+wordcloud(words =(d$word), freq = d$freq, min.freq = 3,
+  max.words=30,scale = c(4, 0.3), random.order=FALSE, rot.per=0.4,
+  colors=brewer.pal(8, "Dark2"))
+```
+No caso do programa de pós-graduação em Matemática, percebe-se também uma grande ocorrência de publicações envolvendo grafos. Como foi observado um grande número de publicações envolvendo grafos também dentro do programa de Pós-Graduação em Ciência da Computação, uma análise posterior poderia revelar se ocorre colaboração entre departamentos diferentes com foco em pesquisas nessa área.
 
 ## Análises Finais
 Pôde-se observar que a Ciência da Computação produz bem mais material do tipo Evento e nos anos analisados apresentou pouca variação na quantidade de Eventos. 
