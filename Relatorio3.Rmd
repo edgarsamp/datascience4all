@@ -54,7 +54,7 @@ O CRISP-DM quebra o processo de mineração de dados em seis fases distintas, em
 
 O ciclo de vida do CRISP-DM apresenta 6 (seis) fases, ilustradas na figura 1.
 
-![Fases CRISP-DM](./CRISPDM.png){width=350px} 
+![Fases CRISP-DM](./images/CRISPDM.png){width=350px} 
 
 ## Delimitações iniciais
 Algumas delimitações são apresentadas a seguir usando a estrutura do CRISP-DM.
@@ -508,7 +508,7 @@ Algumas análises básicas também permitem perceber que os Estados Unidos são 
 ### Publicações de livros por ano agrupados por país
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics('./cic_publications_ano.png')
+knitr::include_graphics('./images/cic_publications_ano.png')
 ```
 
 O maior número de publicações de livros acontece, obviamente, no Brasil. Mas percebe-se, nos anos de 2015 e 2018, que os docentes da Pós-Graduação em Ciência da Computação publicaram livros na Holanda e, especificamente em 2018, também na Inglaterra.
