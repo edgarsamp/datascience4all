@@ -1,20 +1,24 @@
 ---
-title: "Análise da Produção Científica e Acadêmica da Universidade Federal do Ceará - Ciência de Dados para Todos (Data Science For All) - Departamento de Ciência da Computação da UnB"
+title: "Análise da Produção Científica e Acadêmica da Universidade Federal do Ceará - Ciência de Dados para Todos - Departamento de Ciência da Computação da Universidade de Brasília"
+subtitle: "Professores: Jorge Henrique Cabral Fernandes e Ricardo Barros Sampaio"
 author: 
+  - "Grupo 13"
   - "Amanda Bezerra da Silva 15/0057113"
   - "Edgar Sampaio de Barros 16/0005213"
   - "George Geonardo de Pontes da Silva 12/0012197"
   - "Vinícius Costa e Silva 15/0052138"
-date: "24/05/2019"
+date: "30/06/2019"
 output: 
   pdf_document:
-    toc: true
+    toc: yes
+    toc_depth: 3
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("/home/vinicius/projetos/unb/datascience4all")
+setwd(".")
 ```
 
 # Introdução
@@ -858,7 +862,7 @@ Pode-se observar facilmente que há dois *clusters* distintos de pesquisadores q
 ### Computação
 Fazendo-se a análise anterior para a Pós-Graduação em Computação, obtemos os seguintes resultados:
 
-```{r}
+```{r warning = FALSE}
   comp_graph <- jsonlite::fromJSON("comp_graph.json")
   comp_nodes <- comp_graph$nodes
   comp_nodes$properties <- NULL
@@ -886,7 +890,7 @@ Na análise para a Pós-Graduação em Computação fica bem claro que há um n�
 ### Matemática
 Por último, a análise de redes será feita para a Pós-Graduação em Matemática.
 
-```{r}
+```{r warning = FALSE}
   mat_graph <- jsonlite::fromJSON("mat_graph.json")
   mat_nodes <- mat_graph$nodes
   mat_nodes$properties <- NULL
@@ -903,7 +907,7 @@ Observando-se os dados:
   head(mat_relations)
 ```
 
-```{r}
+```{r warning = FALSE}
   graph_mat <- graph_from_data_frame(mat_relations, directed=TRUE, vertices=mat_nodes)
   plot(graph_mat)
 ```
@@ -915,7 +919,7 @@ Ainda dentro do escopo dos modelos de análise, o modelo de *Word Cloud*, ou Nuv
 
 ### Ciência da Computação
 Fazendo-se a limpeza dos dados dos títulos das publicações para criação da nuvem de palavras:
-```{r}
+```{r warning = FALSE}
   cic_publication.df <- data.frame()
   for (i in 1:length(cic_publication[[1]]))
     cic_publication.df <- rbind(cic_publication.df, cic_publication$PERIODICO[[i]])
@@ -927,7 +931,7 @@ Fazendo-se a limpeza dos dados dos títulos das publicações para criação da 
 
 Com os dados dos títulos das publicações limpos, é possível prosseguir para a realização da análise usando os pacotes **tm** e **wordcloud**.
 
-```{r}
+```{r warning = FALSE}
 cic_publication.df$titulo <- iconv(cic_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
 df_wc <- data.frame(doc_id = cic_publication.df$issn, text = cic_publication.df$titulo, stringsAsFactors = FALSE )
 docs <- Corpus(DataframeSource(df_wc))
@@ -952,7 +956,7 @@ A nuvem de palavras acima permite observar que um grande número de publicaçõe
 ### Computação
 A mesma análise de nuvem de palavras pode ser feita também para o programa de pós-graduação em Computação. Iniciando pela limpeza dos dados:
 
-```{r}
+```{r warning = FALSE}
   comp_publication.df <- data.frame()
   for (i in 1:length(comp_publication[[1]]))
     comp_publication.df <- rbind(comp_publication.df, comp_publication$PERIODICO[[i]])
@@ -964,7 +968,7 @@ A mesma análise de nuvem de palavras pode ser feita também para o programa de 
 
 E fazendo-se a nuvem de palavras:
 
-```{r}
+```{r warning = FALSE}
 comp_publication.df$titulo <- iconv(comp_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
 df_wc <- data.frame(doc_id = comp_publication.df$issn, text = comp_publication.df$titulo, stringsAsFactors = FALSE )
 docs <- Corpus(DataframeSource(df_wc))
@@ -990,7 +994,7 @@ No caso do programa de pós-graduação em Computação, percebe-se uma frequên
 ### Matemática
 Por último, pode-se realizar a mesma análise para a pós-graduação em matemática:
 
-```{r}
+```{r warning = FALSE}
   mat_publication.df <- data.frame()
   for (i in 1:length(mat_publication[[1]]))
     mat_publication.df <- rbind(mat_publication.df, mat_publication$PERIODICO[[i]])
@@ -1002,7 +1006,7 @@ Por último, pode-se realizar a mesma análise para a pós-graduação em matem�
 
 E a nuvem de palavras:
 
-```{r}
+```{r warning = FALSE}
 mat_publication.df$titulo <- iconv(mat_publication.df$titulo,from="UTF-8", to = "ASCII//TRANSLIT")
 df_wc <- data.frame(doc_id = mat_publication.df$issn, text = mat_publication.df$titulo, stringsAsFactors = FALSE )
 docs <- Corpus(DataframeSource(df_wc))
@@ -1024,7 +1028,18 @@ wordcloud(words =(d$word), freq = d$freq, min.freq = 3,
 ```
 No caso do programa de pós-graduação em Matemática, percebe-se também uma grande ocorrência de publicações envolvendo grafos. Como foi observado um grande número de publicações envolvendo grafos também dentro do programa de Pós-Graduação em Ciência da Computação, uma análise posterior poderia revelar se ocorre colaboração entre departamentos diferentes com foco em pesquisas nessa área.
 
-## Análises Finais
+# Análises Finais
+
+## Orientações
+
+No geral percebe-se que existem poucas orientações de Pós Doutorado em relação aos demais tipos. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
+
+## Perfil
+
+*Metodologia e Técnicas da Computação*, *Teoria da Computação*, *Sistemas de Computação* e  *Telecomunicações* estão entre as 6 sub áreas de atuação mais frequentes dos programas de Computação e Ciência da Computação. Tal constatação demonstra como os dois programas estão bem relacionados e trabalhos futuros poderiam explorar o grau de colaboração entre os participantes de ambos programas.
+
+## Publicações
+
 Pôde-se observar que a Ciência da Computação produz bem mais material do tipo Evento e nos anos analisados apresentou pouca variação na quantidade de Eventos. 
 
 A Computação também se destaca na produção de bem mais Eventos do que os outros tipos de publicação e isso pode ser explicado pela similaridade entre os programas de Ciência da Computação e de Computação. A quantidade de Eventos apresentou uma queda nos últimos dois anos analisados.
@@ -1035,9 +1050,8 @@ Em relação a participação em Eventos em outros países, percebe-se que os pr
 
 Nos programas de Computação e Ciências da Computação ocorreram muitas participações em Eventos no Estados Unidos, um indicativo de que o país e o Brasil possuem uma boa rede de interação e troca de conhecimento.
 
-No geral percebe-se que existem poucas orientações de Pós Doutorado em relação aos demais tipos. Pode-se supor que isto aconteça devido ao nível de exigência das orientações de Pós Doutorado.
+No geral, em todos os programas percebe-se que 2016 reuniu maiores números de publicações e orientações. A partir dessa percepção é possível criar teorias a respeito do por quê esse ano apresentou melhores resultados e com trabalhos seguintes buscar investigar essas teorias.
 
-No geral, em todos os programas percebe-se que 2016 reuniu maiores números de publicações e orientações. A partir dessa percepção é possível criar teorias a respeito do por quê esse ano apresentou melhores resultados e como trabalhos seguintes buscar investigar essas teorias.
 
 # Referências Bibliográficas
 
